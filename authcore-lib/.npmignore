@@ -1,0 +1,7 @@
+# Exclude development assets from the published NPM package
+src/
+tests/
+tsup.config.ts
+tsconfig.json
+.npmignore
+*.md
