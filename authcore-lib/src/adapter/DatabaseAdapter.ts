@@ -14,6 +14,19 @@ export interface UserPayload {
   id: string;
   role: string;
   email: string;
+  permissions?: string[];
+}
+
+/**
+ * Metadata captured for each refresh-token-backed session.
+ */
+export interface RefreshSessionRecord {
+  id: string;
+  hashedToken: string;
+  userAgent?: string;
+  ip?: string;
+  createdAt: Date;
+  lastUsedAt: Date;
 }
 
 /**
@@ -23,6 +36,10 @@ export interface UserPayload {
  */
 export interface UserRecord extends UserPayload {
   password: string;
+  emailVerified?: boolean;
+  failedLoginAttempts?: number;
+  lockUntil?: Date | null;
+  refreshSessions?: RefreshSessionRecord[];
 }
 
 /**
@@ -43,7 +60,11 @@ export interface AuthDatabaseAdapter {
    * Persist a hashed refresh token associated with a user.
    * Used during login and token refresh flows.
    */
-  saveRefreshToken(userId: string, hashedToken: string): Promise<void>;
+  saveRefreshToken(
+    userId: string,
+    hashedToken: string,
+    metadata?: { userAgent?: string; ip?: string }
+  ): Promise<string>;
 
   /**
    * Revoke (delete) a specific hashed refresh token for a user.
@@ -52,8 +73,37 @@ export interface AuthDatabaseAdapter {
   revokeRefreshToken(userId: string, hashedToken: string): Promise<void>;
 
   /**
+   * Revoke (delete) one refresh session by session id.
+   */
+  revokeRefreshSession(userId: string, sessionId: string): Promise<void>;
+
+  /**
+   * Return all refresh sessions for a user.
+   */
+  getRefreshSessions(userId: string): Promise<RefreshSessionRecord[]>;
+
+  /**
+   * Update the activity timestamp for a session.
+   */
+  touchRefreshSession(userId: string, sessionId: string): Promise<void>;
+
+  /**
    * Revoke ALL refresh tokens for a user.
    * Used as a security measure when a compromised token is detected.
    */
   revokeAllRefreshTokens(userId: string): Promise<void>;
+
+  /**
+   * Increment failed attempts and set lockUntil when max attempts reached.
+   */
+  incrementFailedLoginAttempts(
+    userId: string,
+    maxAttempts: number,
+    lockMs: number
+  ): Promise<{ failedLoginAttempts: number; lockUntil: Date | null }>;
+
+  /**
+   * Clear lockout state on successful login.
+   */
+  clearLoginFailures(userId: string): Promise<void>;
 }
