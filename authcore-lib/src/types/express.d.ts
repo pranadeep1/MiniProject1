@@ -15,6 +15,7 @@ declare global {
       /**
        * The authenticated user's payload, populated by the
        * `requireAuth` middleware after successful JWT verification.
+       * Includes role and optional permissions for authorization checks.
        */
       user?: UserPayload;
     }
