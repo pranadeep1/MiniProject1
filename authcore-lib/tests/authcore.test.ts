@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { CryptoService } from '../src/crypto/tokens';
 import { requireAuth } from '../src/middleware/auth';
 import { requireRole } from '../src/middleware/rbac';
+import { requirePermissions } from '../src/middleware/permissions';
 import {
   AppError,
   catchAsync,
@@ -158,6 +159,50 @@ describe('AuthCore Library', () => {
     });
   });
 
+  describe('requirePermissions Middleware', () => {
+    it('returns 401 if req.user is not set', () => {
+      const middleware = requirePermissions(['REPORTS_READ']);
+      const req: any = {};
+      const res = createMockResponse();
+      const next = vi.fn();
+
+      middleware(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(401);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('returns 403 if required permission is missing', () => {
+      const middleware = requirePermissions(['REPORTS_READ']);
+      const req: any = { user: { id: '1', email: 'user@test.com', role: 'USER', permissions: [] } };
+      const res = createMockResponse();
+      const next = vi.fn();
+
+      middleware(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(next).not.toHaveBeenCalled();
+    });
+
+    it('calls next() when all required permissions are present', () => {
+      const middleware = requirePermissions(['REPORTS_READ']);
+      const req: any = {
+        user: {
+          id: '1',
+          email: 'admin@test.com',
+          role: 'ADMIN',
+          permissions: ['REPORTS_READ', 'USERS_EDIT'],
+        },
+      };
+      const res = createMockResponse();
+      const next = vi.fn();
+
+      middleware(req, res, next);
+
+      expect(next).toHaveBeenCalledTimes(1);
+    });
+  });
+
   describe('Error Handling', () => {
     it('creates AppError with correct statusCode and message', () => {
       const err = new AppError(400, 'Bad request');
@@ -221,6 +266,11 @@ describe('AuthCore Library', () => {
         role: 'USER',
         email: 'user@test.com',
         password: 'hashed',
+        emailVerified: true,
+        permissions: [],
+        failedLoginAttempts: 0,
+        lockUntil: null,
+        refreshSessions: [],
       });
     });
 
@@ -246,13 +296,17 @@ describe('AuthCore Library', () => {
       await adapter.revokeAllRefreshTokens('u1');
 
       expect(UserModel.findByIdAndUpdate).toHaveBeenNthCalledWith(1, 'u1', {
-        $push: { refreshTokens: 'hash-1' },
+        $push: {
+          refreshSessions: expect.objectContaining({
+            hashedToken: 'hash-1',
+          }),
+        },
       });
       expect(UserModel.findByIdAndUpdate).toHaveBeenNthCalledWith(2, 'u1', {
-        $pull: { refreshTokens: 'hash-1' },
+        $pull: { refreshSessions: { hashedToken: 'hash-1' } },
       });
       expect(UserModel.findByIdAndUpdate).toHaveBeenNthCalledWith(3, 'u1', {
-        $set: { refreshTokens: [] },
+        $set: { refreshSessions: [] },
       });
     });
   });
