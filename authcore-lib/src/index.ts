@@ -16,7 +16,7 @@ export type {
   UserRecord,
 } from './adapter/DatabaseAdapter';
 export { MongoAuthAdapter } from './adapter/MongoAuthAdapter';
-export { UserSchema } from './adapter/MongoSchemas';
+export { UserSchema, RoleSchema, AuditLogSchema } from './adapter/MongoSchemas';
 
 // --- Cryptography ---
 export { CryptoService } from './crypto/tokens';
@@ -25,11 +25,16 @@ export type { CryptoConfig } from './crypto/tokens';
 // --- Express Middleware ---
 export { requireAuth } from './middleware/auth';
 export { requireRole } from './middleware/rbac';
+export { requirePermissions } from './middleware/permissions';
 export {
   AppError,
   catchAsync,
   globalErrorHandler,
 } from './middleware/errorHandler';
+
+// --- Auth Service (Core Orchestrator) ---
+export { AuthService } from './services/AuthService';
+export type { AuthServiceConfig } from './services/AuthService';
 
 // --- Type Augmentation (side-effect import) ---
 import './types/express.d';
