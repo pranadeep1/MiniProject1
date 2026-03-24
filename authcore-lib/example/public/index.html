@@ -5,20 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AuthCore Dashboard</title>
     <style>
+      @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Source+Sans+3:wght@400;500;600;700&display=swap');
+
       :root {
-        --bg: #f6f7fb;
-        --text: #1b1d2a;
-        --muted: #585f77;
-        --panel: #ffffff;
-        --line: #e7e9f2;
-        --line-strong: #cfd5ea;
-        --brand: #0f766e;
-        --brand-strong: #0b5f59;
-        --accent: #ff8a00;
+        --bg-0: #f5f6f3;
+        --bg-1: #edf3ef;
+        --ink-strong: #102118;
+        --ink: #1b3427;
+        --muted: #5a7267;
+        --panel: rgba(255, 255, 255, 0.83);
+        --panel-strong: #ffffff;
+        --line: #d9e5dc;
+        --line-strong: #bfd1c4;
+        --brand: #136f63;
+        --brand-strong: #0b5a4f;
+        --alert: #f08a24;
         --danger: #b42318;
-        --ok: #067647;
-        --radius: 16px;
-        --shadow: 0 8px 30px rgba(12, 26, 75, 0.08);
+        --ok: #077a4b;
+        --radius: 18px;
+        --shadow-soft: 0 18px 42px rgba(15, 36, 27, 0.08);
+        --shadow-card: 0 8px 20px rgba(14, 32, 24, 0.08);
       }
 
       * {
@@ -28,27 +34,55 @@
       body {
         margin: 0;
         min-height: 100vh;
-        font-family: "Manrope", "Segoe UI", sans-serif;
-        color: var(--text);
+        font-family: 'Source Sans 3', 'Segoe UI', sans-serif;
+        color: var(--ink);
         background:
-          radial-gradient(1200px 600px at 110% -10%, #d8f5f1 0%, transparent 64%),
-          radial-gradient(900px 500px at -8% -2%, #fff2dc 0%, transparent 62%),
-          linear-gradient(180deg, #ffffff 0%, #f6f7fb 48%, #eef3f8 100%),
-          var(--bg);
+          radial-gradient(65% 55% at 100% 0%, rgba(245, 175, 67, 0.18) 0%, rgba(245, 175, 67, 0) 70%),
+          radial-gradient(70% 60% at 0% 0%, rgba(25, 139, 121, 0.18) 0%, rgba(25, 139, 121, 0) 70%),
+          linear-gradient(180deg, #fdfefe 0%, var(--bg-0) 40%, var(--bg-1) 100%);
+      }
+
+      body::before,
+      body::after {
+        content: '';
+        position: fixed;
+        width: 380px;
+        height: 380px;
+        border-radius: 50%;
+        filter: blur(40px);
+        opacity: 0.23;
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::before {
+        background: #37af97;
+        top: -140px;
+        right: -90px;
+      }
+
+      body::after {
+        background: #f2ae52;
+        bottom: -160px;
+        left: -120px;
       }
 
       .shell {
+        position: relative;
+        z-index: 1;
         max-width: 1280px;
-        margin: 24px auto;
-        padding: 0 16px 28px;
+        margin: 22px auto;
+        padding: 0 16px 32px;
       }
 
       .topbar {
-        border: 1px solid #dce8e5;
-        background: linear-gradient(120deg, #ffffff 0%, #f5fffd 40%, #fff8eb 100%);
-        box-shadow: var(--shadow);
-        border-radius: 20px;
-        padding: 20px;
+        border: 1px solid #d3e3da;
+        background: linear-gradient(130deg, rgba(255, 255, 255, 0.9) 0%, rgba(240, 250, 246, 0.9) 48%, rgba(255, 244, 227, 0.9) 100%);
+        box-shadow: var(--shadow-soft);
+        -webkit-backdrop-filter: blur(8px);
+        backdrop-filter: blur(8px);
+        border-radius: 24px;
+        padding: 22px;
         margin-bottom: 14px;
       }
 
@@ -62,30 +96,52 @@
 
       h1 {
         margin: 0;
-        font-size: 30px;
-        letter-spacing: -0.02em;
-        line-height: 1.1;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -0.03em;
+        line-height: 1.03;
+        color: var(--ink-strong);
       }
 
       .tag {
-        border: 1px solid #bfe4dd;
-        background: #edfffb;
-        color: #0f766e;
-        padding: 6px 10px;
+        border: 1px solid #b7d7c6;
+        background: #ebfbf3;
+        color: var(--brand-strong);
+        padding: 7px 12px;
         border-radius: 999px;
         font-size: 12px;
         font-weight: 700;
       }
 
       .subtitle {
-        margin: 8px 0 0;
+        margin: 10px 0 16px;
         color: var(--muted);
-        font-size: 14px;
+        font-size: 15px;
+        max-width: 76ch;
+      }
+
+      .flow-strip {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 9px;
+      }
+
+      .flow-pill {
+        border: 1px solid #d5e5da;
+        background: rgba(255, 255, 255, 0.76);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 12px;
+        font-weight: 600;
+        color: #2f4f42;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(295px, 1fr));
         gap: 14px;
       }
 
@@ -93,27 +149,43 @@
         border: 1px solid var(--line);
         background: var(--panel);
         border-radius: var(--radius);
-        box-shadow: var(--shadow);
+        box-shadow: var(--shadow-card);
         padding: 16px;
         position: relative;
         overflow: hidden;
+        animation: cardEnter 0.55s ease both;
       }
 
+      .card:nth-child(1) { animation-delay: 0.03s; }
+      .card:nth-child(2) { animation-delay: 0.06s; }
+      .card:nth-child(3) { animation-delay: 0.09s; }
+      .card:nth-child(4) { animation-delay: 0.12s; }
+      .card:nth-child(5) { animation-delay: 0.15s; }
+      .card:nth-child(6) { animation-delay: 0.18s; }
+      .card:nth-child(7) { animation-delay: 0.21s; }
+      .card:nth-child(8) { animation-delay: 0.24s; }
+
       .card::before {
-        content: "";
+        content: '';
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
         height: 4px;
-        background: linear-gradient(90deg, #0f766e 0%, #22c55e 60%, #ff8a00 100%);
-        opacity: 0.9;
+        background: linear-gradient(90deg, #0f6d61 0%, #1a9f7b 55%, #f08a24 100%);
+      }
+
+      .card:focus-within {
+        border-color: #94c9b1;
+        box-shadow: 0 14px 28px rgba(12, 34, 25, 0.14);
       }
 
       .card h2 {
         margin: 0;
-        font-size: 17px;
+        font-family: 'Space Grotesk', sans-serif;
+        font-size: 18px;
         letter-spacing: -0.01em;
+        color: var(--ink-strong);
       }
 
       .card p {
@@ -126,8 +198,10 @@
         display: block;
         margin: 9px 0 5px;
         font-size: 12px;
-        color: var(--muted);
-        font-weight: 600;
+        color: #4a6658;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.02em;
       }
 
       input,
@@ -135,10 +209,10 @@
         width: 100%;
         border: 1px solid var(--line-strong);
         border-radius: 12px;
-        background: #ffffff;
+        background: var(--panel-strong);
         padding: 10px 11px;
         font: inherit;
-        color: var(--text);
+        color: var(--ink);
         transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
       }
 
@@ -149,10 +223,9 @@
 
       input:focus,
       textarea:focus {
-        outline: 2px solid #baf0e8;
-        outline-offset: 1px;
-        border-color: #28b6a3;
-        box-shadow: 0 0 0 3px rgba(40, 182, 163, 0.12);
+        outline: none;
+        border-color: #2ea78d;
+        box-shadow: 0 0 0 4px rgba(46, 167, 141, 0.16);
         transform: translateY(-1px);
       }
 
@@ -169,33 +242,39 @@
         padding: 9px 13px;
         font-size: 13px;
         font-weight: 700;
+        letter-spacing: 0.01em;
         cursor: pointer;
         transition: transform 0.15s ease, box-shadow 0.2s ease, filter 0.2s ease;
       }
 
       button:hover {
         transform: translateY(-1px);
-        box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+        box-shadow: 0 7px 20px rgba(13, 38, 28, 0.16);
+      }
+
+      button:focus-visible {
+        outline: 3px solid rgba(19, 111, 99, 0.26);
+        outline-offset: 1px;
       }
 
       .btn-primary {
-        background: linear-gradient(135deg, var(--brand) 0%, #16a085 100%);
+        background: linear-gradient(135deg, var(--brand) 0%, #1ca584 100%);
         color: #ffffff;
       }
 
       .btn-secondary {
         background: #ffffff;
-        color: #1b1d2a;
-        border-color: #d5dcec;
+        color: #163025;
+        border-color: #c5d7cc;
       }
 
       .btn-warning {
-        background: var(--accent);
+        background: linear-gradient(135deg, #f4a038 0%, var(--alert) 100%);
         color: #1f2937;
       }
 
       .btn-danger {
-        background: var(--danger);
+        background: linear-gradient(135deg, #d84b3f 0%, var(--danger) 100%);
         color: #ffffff;
       }
 
@@ -221,8 +300,8 @@
 
       .token {
         margin-top: 10px;
-        border: 1px dashed #9fc0d8;
-        background: #f4f9ff;
+        border: 1px dashed #9fc7b4;
+        background: #f0faf6;
         border-radius: 12px;
         padding: 10px;
         font-size: 12px;
@@ -231,11 +310,11 @@
 
       .output-card {
         margin-top: 12px;
-        border: 1px solid #0a2148;
+        border: 1px solid #12392d;
         border-radius: var(--radius);
-        background: linear-gradient(180deg, #0f1d38 0%, #0a162c 100%);
-        color: #e2e8f0;
-        box-shadow: var(--shadow);
+        background: linear-gradient(180deg, #10281f 0%, #0f2019 100%);
+        color: #dbf5ea;
+        box-shadow: var(--shadow-soft);
         overflow: hidden;
       }
 
@@ -244,14 +323,14 @@
         justify-content: space-between;
         align-items: center;
         padding: 10px 12px;
-        border-bottom: 1px solid #1e293b;
+        border-bottom: 1px solid #1e4a3b;
         font-size: 12px;
       }
 
       .output-head button {
-        border: 1px solid #35518a;
+        border: 1px solid #3d7d67;
         background: rgba(255, 255, 255, 0.06);
-        color: #dbeafe;
+        color: #d6ffef;
         font-size: 12px;
         padding: 6px 9px;
       }
@@ -264,11 +343,30 @@
         font-size: 12px;
       }
 
+      @keyframes cardEnter {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       @media (max-width: 820px) {
         .shell {
           margin-top: 12px;
           padding-left: 10px;
           padding-right: 10px;
+        }
+
+        .topbar {
+          padding: 16px;
+        }
+
+        .flow-strip {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -278,11 +376,16 @@
       <section class="topbar">
         <div class="title-row">
           <h1>AuthCore Admin Console</h1>
-          <span class="tag">Custom clean layout</span>
         </div>
         <p class="subtitle">
-          Register users, verify OTP, login, manage sessions, roles, and user permissions from one dashboard.
+          A complete authentication and RBAC workflow in one dashboard. Use the step flow below during your presentation for a smooth, confident walkthrough.
         </p>
+        <div class="flow-strip">
+          <div class="flow-pill">Step A: Register and verify OTP</div>
+          <div class="flow-pill">Step B: Login and capture access token</div>
+          <div class="flow-pill">Step C: Prove protected and admin access</div>
+          <div class="flow-pill">Step D: Manage sessions, users, and roles</div>
+        </div>
       </section>
 
       <section class="grid">
@@ -429,19 +532,99 @@
 
     <script>
       const TOKEN_STORAGE_KEY = 'authcore_access_token';
+      const OUTPUT_MAX_CHARS = 28000;
+      const OUTPUT_MAX_DEPTH = 5;
+      const OUTPUT_ARRAY_PREVIEW = 30;
+      const OUTPUT_OBJECT_KEYS_PREVIEW = 60;
+      const OUTPUT_STRING_PREVIEW = 700;
+
       let accessToken = localStorage.getItem(TOKEN_STORAGE_KEY) || '';
+      let outputFrameId = null;
 
       const output = document.getElementById('output');
       const tokenBox = document.getElementById('tokenBox');
       const authStatus = document.getElementById('authStatus');
 
+      function setOutputText(text) {
+        const nextText = String(text ?? '');
+        if (outputFrameId) {
+          cancelAnimationFrame(outputFrameId);
+        }
+
+        outputFrameId = requestAnimationFrame(() => {
+          output.textContent = nextText;
+          outputFrameId = null;
+        });
+      }
+
+      function sanitizeForOutput(value, depth = 0, seen = new WeakSet()) {
+        if (value === null || value === undefined) return value;
+        if (typeof value === 'number' || typeof value === 'boolean') return value;
+
+        if (typeof value === 'string') {
+          if (value.length > OUTPUT_STRING_PREVIEW) {
+            return `${value.slice(0, OUTPUT_STRING_PREVIEW)}... [${value.length - OUTPUT_STRING_PREVIEW} chars truncated]`;
+          }
+          return value;
+        }
+
+        if (depth >= OUTPUT_MAX_DEPTH) {
+          return '[Max depth reached]';
+        }
+
+        if (Array.isArray(value)) {
+          const previewItems = value
+            .slice(0, OUTPUT_ARRAY_PREVIEW)
+            .map((item) => sanitizeForOutput(item, depth + 1, seen));
+          if (value.length > OUTPUT_ARRAY_PREVIEW) {
+            previewItems.push(`[... ${value.length - OUTPUT_ARRAY_PREVIEW} more items omitted]`);
+          }
+          return previewItems;
+        }
+
+        if (typeof value === 'object') {
+          if (seen.has(value)) {
+            return '[Circular reference]';
+          }
+          seen.add(value);
+
+          const entries = Object.entries(value);
+          const limitedEntries = entries.slice(0, OUTPUT_OBJECT_KEYS_PREVIEW);
+          const normalized = {};
+          for (const [key, val] of limitedEntries) {
+            normalized[key] = sanitizeForOutput(val, depth + 1, seen);
+          }
+          if (entries.length > OUTPUT_OBJECT_KEYS_PREVIEW) {
+            normalized.__truncatedKeys = entries.length - OUTPUT_OBJECT_KEYS_PREVIEW;
+          }
+
+          seen.delete(value);
+          return normalized;
+        }
+
+        return String(value);
+      }
+
+      function formatDataForOutput(data) {
+        try {
+          const safeData = sanitizeForOutput(data);
+          const pretty = JSON.stringify(safeData, null, 2);
+          if (pretty.length > OUTPUT_MAX_CHARS) {
+            return `${pretty.slice(0, OUTPUT_MAX_CHARS)}\n... [output truncated for speed]`;
+          }
+          return pretty;
+        } catch {
+          return '[Unable to render response payload]';
+        }
+      }
+
       function print(title, response, data) {
-        output.textContent = [
+        setOutputText([
           title,
           `HTTP ${response.status} ${response.statusText}`,
           '',
-          JSON.stringify(data, null, 2)
-        ].join('\n');
+          formatDataForOutput(data)
+        ].join('\n'));
       }
 
       function updateAuthStatus() {
@@ -454,9 +637,15 @@
         }
       }
 
+      function clearLocalAuthState() {
+        accessToken = '';
+        localStorage.removeItem(TOKEN_STORAGE_KEY);
+        updateAuthStatus();
+      }
+
       function ensureAuthenticated(actionName) {
         if (!accessToken) {
-          output.textContent = `${actionName}\nPlease login first. No access token found.`;
+          setOutputText(`${actionName}\nPlease login first. No access token found.`);
           return false;
         }
         return true;
@@ -527,9 +716,31 @@
         const password = document.getElementById('loginPassword').value;
 
         const { response, data } = await callApi('/api/auth/login', 'POST', { email, password }, false);
+        if (
+          response.status === 429 &&
+          data &&
+          typeof data.message === 'string' &&
+          data.message.toLowerCase().includes('temporarily locked')
+        ) {
+          clearLocalAuthState();
+          setOutputText([
+            'LOGIN',
+            'HTTP 429 Too Many Requests',
+            '',
+            data.message,
+            '',
+            'Demo recovery:',
+            '1) Wait for lockout period to pass (default 15 minutes), then retry login.',
+            '2) Or reset lockout in DB for the demo account and login again.',
+          ].join('\n'));
+          return;
+        }
+
         if (data && data.accessToken) {
           accessToken = data.accessToken;
           localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
+        } else if (!response.ok) {
+          clearLocalAuthState();
         }
         updateAuthStatus();
         print('LOGIN', response, data);
@@ -537,9 +748,32 @@
 
       document.getElementById('refreshBtn').addEventListener('click', async () => {
         const { response, data } = await callApi('/api/auth/refresh', 'POST', null, false);
+
+        if (
+          response.status === 401 &&
+          data &&
+          typeof data.message === 'string' &&
+          data.message.toLowerCase().includes('refresh token missing')
+        ) {
+          clearLocalAuthState();
+          setOutputText([
+            'REFRESH',
+            'HTTP 401 Unauthorized',
+            '',
+            'Refresh cookie is missing in this browser context.',
+            'Recovery steps:',
+            '1) Login again from this same page (this issues a new HTTP-only refresh cookie).',
+            '2) Keep using the same host and port for the demo tab (do not switch localhost <-> 127.0.0.1).',
+            '3) If needed, clear site cookies for this host and login again.',
+          ].join('\n'));
+          return;
+        }
+
         if (data && data.accessToken) {
           accessToken = data.accessToken;
           localStorage.setItem(TOKEN_STORAGE_KEY, accessToken);
+        } else if (!response.ok) {
+          clearLocalAuthState();
         }
         updateAuthStatus();
         print('REFRESH', response, data);
@@ -572,7 +806,7 @@
       document.getElementById('revokeSessionBtn').addEventListener('click', async () => {
         const sessionId = document.getElementById('revokeSessionId').value.trim();
         if (!sessionId) {
-          output.textContent = 'REVOKE_SESSION\nSession ID is required.';
+          setOutputText('REVOKE_SESSION\nSession ID is required.');
           return;
         }
         if (!ensureAuthenticated('REVOKE_SESSION')) return;
@@ -592,7 +826,7 @@
         const permissionsInput = document.getElementById('adminPermissions').value;
 
         if (!userId) {
-          output.textContent = 'ADMIN_UPDATE_USER\nTarget User ID is required.';
+          setOutputText('ADMIN_UPDATE_USER\nTarget User ID is required.');
           return;
         }
         if (!ensureAuthenticated('ADMIN_UPDATE_USER')) return;
@@ -626,7 +860,7 @@
         const permissionsInput = document.getElementById('newRolePermissions').value;
 
         if (!name) {
-          output.textContent = 'ADMIN_CREATE_ROLE\nRole name is required.';
+          setOutputText('ADMIN_CREATE_ROLE\nRole name is required.');
           return;
         }
         if (!ensureAuthenticated('ADMIN_CREATE_ROLE')) return;
@@ -649,7 +883,7 @@
       document.getElementById('viewUserDetailsBtn').addEventListener('click', async () => {
         const userId = document.getElementById('detailUserId').value.trim();
         if (!userId) {
-          output.textContent = 'ADMIN_USER_DETAILS\nUser ID is required.';
+          setOutputText('ADMIN_USER_DETAILS\nUser ID is required.');
           return;
         }
         if (!ensureAuthenticated('ADMIN_USER_DETAILS')) return;
@@ -660,16 +894,14 @@
 
       document.getElementById('logoutBtn').addEventListener('click', async () => {
         const { response, data } = await callApi('/api/auth/logout', 'POST', null, false);
-        accessToken = '';
-        localStorage.removeItem(TOKEN_STORAGE_KEY);
-        updateAuthStatus();
+        clearLocalAuthState();
         print('LOGOUT', response, data);
       });
 
       document.getElementById('copyOutputBtn').addEventListener('click', async () => {
         try {
           await navigator.clipboard.writeText(output.textContent || '');
-          output.textContent = `COPIED\n${output.textContent}`;
+          setOutputText(`COPIED\n${output.textContent}`);
         } catch {
           // Ignore clipboard errors.
         }
